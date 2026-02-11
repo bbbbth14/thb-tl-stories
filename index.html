@@ -55,6 +55,30 @@
       to { transform: translateY(-120vh) rotate(405deg); opacity: 0.2; }
     }
 
+    nav {
+      background: rgba(0,0,0,.3); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      position: sticky; top: 0; z-index: 100;
+    }
+    nav ul {
+      max-width: 950px; margin: 0 auto; padding: 0 16px;
+      display: flex; gap: 8px; list-style: none;
+    }
+    nav a {
+      display: block; padding: 14px 18px; color: var(--text);
+      text-decoration: none; font-weight: 600; font-size: 14px;
+      border-radius: 8px; transition: all .2s;
+      position: relative;
+    }
+    nav a:hover {
+      background: rgba(255,255,255,.08);
+      color: #ffd8e9;
+    }
+    nav a.active {
+      background: var(--btn-gradient);
+      color: #111;
+    }
+
     .wrap {
       max-width: 950px; padding: 20px 16px 60px; margin: 0 auto;
     }
@@ -181,6 +205,12 @@
   </style>
 </head>
 <body>
+  <nav>
+    <ul>
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="valentine.html">Our First Valentine 💝</a></li>
+    </ul>
+  </nav>
   <div class="hearts" aria-hidden="true"></div>
   <div class="wrap">
     <div class="hero">
@@ -255,6 +285,7 @@
           </summary>
           <div class="dreamlist-content">
             <ul>
+              <li><input type="checkbox" id="dream0" name="dream0"><label for="dream0">Đi Vũng Tàu cùng nhau .</label></li>
               <li><input type="checkbox" id="dream1" name="dream1"><label for="dream1">Đi Phú Yên cùng nhau 🌳.</label></li>
               <li><input type="checkbox" id="dream2" name="dream2"><label for="dream2">Đi An Giang cùng nhau 🏖️.</label></li>
               <li><input type="checkbox" id="dream3" name="dream3"><label for="dream3">Đi Cà Mau cùng nhau 💦.</label></li>
@@ -262,7 +293,7 @@
               <li><input type="checkbox" id="dream5" name="dream5"><label for="dream5">Đưa em đi ra Bắc, từ Hà Nội đến 1 vòng Đông Bắc, Tây Bắc 🏍️.</label></li>
               <li><input type="checkbox" id="dream6" name="dream6"><label for="dream6">Em dẫn anh đi hết núi ở miền Nam 🧗‍♀️.</label></li>
               <li><input type="checkbox" id="dream7" name="dream7"><label for="dream7">Cùng nhau làm những điều cả 2 chưa từng làm 🐖.</label></li>
-              <li><input type="checkbox" id="dream8" name="dream8"><label for="dream7">Yêu thương TL thật nhiều, lấy TL làm vợ 👰.</label></li>
+              <li><input type="checkbox" id="dream8" name="dream8"><label for="dream8">Yêu thương TL thật nhiều, lấy TL làm vợ 👰.</label></li>
             </ul>
           </div>
         </details>
@@ -361,6 +392,36 @@ chính thức bên cạnh nhau chỉ ngắn ngủi thôi nhưng đối với em 
     toggleSection('openLetterBtn', 'letter', 'center');
     toggleSection('toggleMilestones', 'milestones');
     toggleSection('toggleDreamlist', 'dreamlist');
+
+    // Persist dreamlist checkbox states (reload-safe)
+    const DREAMLIST_STORAGE_KEY = 'thb_tl_dreamlist_v1';
+    function getDreamlistCheckboxes() {
+      return Array.from(document.querySelectorAll('#dreamlist input[type="checkbox"][id]'));
+    }
+    function loadDreamlistState() {
+      let saved = {};
+      try {
+        saved = JSON.parse(localStorage.getItem(DREAMLIST_STORAGE_KEY) || '{}');
+      } catch (_) {
+        saved = {};
+      }
+      for (const cb of getDreamlistCheckboxes()) {
+        if (typeof saved[cb.id] === 'boolean') cb.checked = saved[cb.id];
+      }
+    }
+    function saveDreamlistState() {
+      const state = {};
+      for (const cb of getDreamlistCheckboxes()) state[cb.id] = cb.checked;
+      try {
+        localStorage.setItem(DREAMLIST_STORAGE_KEY, JSON.stringify(state));
+      } catch (_) {
+        // ignore (e.g., storage disabled)
+      }
+    }
+    loadDreamlistState();
+    for (const cb of getDreamlistCheckboxes()) {
+      cb.addEventListener('change', saveDreamlistState);
+    }
 
     // Gallery
     let currentImageIndex = 0;
