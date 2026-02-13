@@ -185,6 +185,8 @@
       width: 200px; height: 200px; margin: 0 auto 20px;
       position: relative; cursor: pointer;
       transition: transform .3s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     .gift-box:hover { transform: scale(1.05); }
     .gift-box-body {
@@ -560,6 +562,24 @@ làm thật nhiều thứ có ý nghĩa cùng nhau(anh nghĩ ra nhiều cái l�
     const giftText = document.querySelector('.gift-text');
     let isOpened = false;
 
+    let lastGiftInteractAt = 0;
+    function openGiftBoxOnce() {
+      if (isOpened) return;
+      giftBox.classList.add('opening');
+      isOpened = true;
+    }
+
+    function onGiftInteract(e) {
+      const now = Date.now();
+      if (now - lastGiftInteractAt < 350) return; // prevent double-fire (touch + click)
+      lastGiftInteractAt = now;
+
+      const x = (e && typeof e.clientX === 'number') ? e.clientX : (window.innerWidth / 2);
+      const y = (e && typeof e.clientY === 'number') ? e.clientY : (window.innerHeight / 2);
+      burstHeartsAt(x, y);
+      openGiftBoxOnce();
+    }
+
     const GIFT_BACKGROUNDS = [
       'images/gdrive/IMG_8634.JPG',
       'images/gdrive/IMG_8748.JPG',
@@ -608,6 +628,11 @@ làm thật nhiều thứ có ý nghĩa cùng nhau(anh nghĩ ra nhiều cái l�
       // Start background slideshow (gift text background)
       startGiftBackgroundSlideshow();
 
+      // Auto-open the gift box so the letter is visible on mobile
+      setTimeout(() => {
+        openGiftBoxOnce();
+      }, 220);
+
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const rect = giftBox.getBoundingClientRect();
@@ -633,13 +658,9 @@ làm thật nhiều thứ có ý nghĩa cùng nhau(anh nghĩ ra nhiều cái l�
       }
     }
 
-    giftBox.addEventListener('click', (e) => {
-      burstHeartsAt(e.clientX, e.clientY);
-      if (!isOpened) {
-        giftBox.classList.add('opening');
-        isOpened = true;
-      }
-    });
+    giftBox.addEventListener('click', onGiftInteract);
+    giftBox.addEventListener('pointerup', onGiftInteract);
+    giftBox.addEventListener('touchend', onGiftInteract, { passive: true });
 
     closePopup.addEventListener('click', () => {
       giftPopup.classList.remove('active');
