@@ -252,6 +252,8 @@
       border: 2px solid rgba(255,107,154,.2);
       opacity: 0; transform: translateY(20px);
       transition: all .5s ease .8s;
+      max-height: 70vh;
+      overflow-y: auto;
     }
     .gift-box.opening ~ .gift-message {
       opacity: 1; transform: translateY(0);
@@ -268,6 +270,8 @@
       overflow: hidden;
       border: 1px solid rgba(255,107,154,.16);
       background: rgba(255,255,255,.85);
+      font-size: 15px;
+      line-height: 1.7;
     }
     .gift-text::before {
       content: "";
@@ -288,6 +292,7 @@
     }
     .gift-message p {
       color: var(--text); margin: 8px 0; line-height: 1.8;
+      font-size: 15px;
     }
     .close-popup {
       position: absolute; top: 20px; right: 20px;
@@ -356,10 +361,17 @@
 
     @media (max-width: 420px) {
       .valentine-content { padding: 16px; }
-      .gift-box { width: 160px; height: 160px; }
-      .gift-box-body { height: 110px; }
-      .gift-message { padding: 20px; max-width: 90%; }
-      .gift-container { padding: 20px 10px; }
+      .gift-box { width: 140px; height: 140px; }
+      .gift-box-body { height: 95px; }
+      .gift-box-lid { height: 32px; top: 40px; }
+      .gift-bow { width: 50px; height: 24px; top: 28px; }
+      .gift-bow::before, .gift-bow::after { width: 25px; height: 25px; }
+      .gift-content { font-size: 36px; }
+      .gift-message { padding: 16px 18px; max-width: 92%; max-height: 65vh; font-size: 14px; }
+      .gift-message h3 { font-size: 20px; }
+      .gift-message p { font-size: 14px; margin: 6px 0; }
+      .gift-text { padding: 10px 12px; font-size: 14px; line-height: 1.65; }
+      .gift-container { padding: 16px 8px; }
     }
 
     @media (max-width: 520px) {
@@ -370,7 +382,15 @@
       .hero { padding: 22px 16px; }
       .valentine-content h2 { font-size: 20px; }
       .valentine-date { font-size: 16px; }
-      .gift-text { width: 100%; }
+      .gift-text { width: 100%; font-size: 14.5px; }
+    }
+
+    @media (max-height: 700px) {
+      .gift-box { width: 130px; height: 130px; }
+      .gift-box-body { height: 88px; }
+      .gift-box-lid { height: 30px; top: 38px; }
+      .gift-message { max-height: 55vh; padding: 14px 16px; }
+      .gift-container { padding: 12px 8px; }
     }
   </style>
 </head>
