@@ -257,7 +257,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: url('images/Day1.jpg') center/cover no-repeat;
+      background: var(--gift-bg, url('images/gdrive/IMG_8634.JPG')) center/cover no-repeat;
       opacity: .16;
       filter: saturate(1.05) contrast(1.02);
       z-index: 0;
@@ -363,7 +363,7 @@
       <div class="title">
         <div class="heart-logo"><span></span></div>
         <div>
-          <h1>Our First Valentine 💝</h1>
+          <h1>Happy Valentine's Day em yêu 💕</h1>
           <p class="lead">Ngày Valentine đầu tiên của chúng ta - Tiếc là mỗi đứa 1 nơi :( </p>
         </div>
       </div>
@@ -438,11 +438,22 @@
         <div class="gift-message-inner">
           <div class="gift-text">
             <!-- <h3>💕 Hiện tại chưa có quà, chỉ có những lời từ yêu thương trái tim thui hihi💕</h3> -->
-            <h3>💕 XXX💕</h3>
+            <!-- <h3>💕 XXX💕</h3> -->
             <p>Em yêu của anh,</p>
-            <p>xxx.</p>
-            <p style="font-weight: 600; color: #ff1f7a; margin-top: 16px;">Anh yêu em rất nhiều! 💖</p>
-            <p style="font-size: 14px; margin-top: 12px;"><em>- THB gửi TL với tất cả tình yêu</em></p>
+            <p>Xin lỗi lợn yêu vì hôm nay không thể ở bên em, không hoa, không tặng gì cho lợn. Cho anh nợ đến ngày chúng ta gặp nhau ở SG sau tết nhaaaa.
+Giờ chỉ có những lời từ trái tim thui, chỉ có bức thư đầu tiên của 2026 (tiếc là không phải thư tay 🥲).
+
+<br> Cũng gần 200 ngày mình yêu nhau rồi lợn yêu, tất nhiên không phải xuyên suốt khoảng thời gian đó ngày nào cũng vui, cũng hạnh phúc. Nhưng suốt 
+những ngày đó là những ngày anh tìm được tình yêu đúng nghĩa.  
+Cảm ơn lợn nhiều vì đã ở cạnh anh, yêu thương, quan tâm anh, giúp anh tốt lên hàng ngày 🤌. 
+<br>Giờ thì anh mong mình thực sự cố gắng để 2 đứa thật hạnh phúc bên nhau, yêu thương nhau qua rất nhiều Valentine's day nữa, cùng nhau đi thật nhiều nơi, 
+làm thật nhiều thứ có ý nghĩa cùng nhau(anh nghĩ ra nhiều cái lắm gòi chỉ đợi lợn vào thôi kaka 🙈). 
+<br> Ăn Tết vui vẻ rồi vào đoàn tụ nha lợn húi 🐖 huhu. 
+
+</p>
+            <p style="font-weight: 600; color: #ff1f7a; margin-top: 16px;">Yêu em rất nhiều, Bún xinh, lợn yêu, công chúa, em yêu của anh.
+              Mong bức thư online này sẽ giúp anh deliver đến em một cái ôm thật chặt, 1 nụ hôn nồng cháiii 💕</p>
+            <p style="font-size: 14px; margin-top: 12px;"><em>- Gửi đến em với tất cả tình yêu -</em></p>
           </div>
         </div>
       </div>
@@ -507,7 +518,7 @@
         toggle.textContent = "Stop";
         hint.textContent = "Chúc em nghe nhạc vui vẻ 💞";
       } catch (e) {
-        hint.textContent = "Trình duyệt cần thao tác để phát nhạc. Bấm lại nhé!";
+        hint.textContent = "Trình duyệt cần thao tác để phát nhạc. Em bấm lại nhé!";
       }
     }
     toggle.addEventListener('click', async () => {
@@ -521,7 +532,7 @@
           hint.textContent = "Em bấm vào để nghe nhạc nhéeee";
         }
       } catch (e) {
-        hint.textContent = "Trình duyệt cần thao tác để phát nhạc. Nhấn lại nhé!";
+        hint.textContent = "Trình duyệt cần thao tác để phát nhạc. Em nhấn lại nhé!";
       }
     });
 
@@ -530,7 +541,46 @@
     const giftBox = document.getElementById('giftBox');
     const openGiftBtn = document.getElementById('openGiftBtn');
     const closePopup = document.getElementById('closePopup');
+    const giftText = document.querySelector('.gift-text');
     let isOpened = false;
+
+    const GIFT_BACKGROUNDS = [
+      'images/gdrive/IMG_8634.JPG',
+      'images/gdrive/IMG_8748.JPG',
+      'images/gdrive/att.LFSa0OwWvn625yeCkqq0S0pghmgeVVu4YVJQF0iF2M4.jpg',
+      'images/gdrive/IMG_0068.jpg',
+      'images/gdrive/IMG_1094.jpg',
+      'images/gdrive/IMG_1564.jpg',
+      'images/gdrive/IMG_2412.jpg',
+      'images/gdrive/IMG_9539.jpg',
+      'images/gdrive/IMG_9794.jpg',
+      'images/gdrive/IMG_9883.jpg'
+    ];
+    let giftBgTimer = null;
+    let giftBgIndex = 0;
+
+    function setGiftBackground(src) {
+      if (!giftText) return;
+      giftText.style.setProperty('--gift-bg', `url('${src}')`);
+    }
+
+    function startGiftBackgroundSlideshow() {
+      if (!giftText) return;
+      stopGiftBackgroundSlideshow();
+      giftBgIndex = 0;
+      setGiftBackground(GIFT_BACKGROUNDS[giftBgIndex]);
+      giftBgTimer = setInterval(() => {
+        giftBgIndex = (giftBgIndex + 1) % GIFT_BACKGROUNDS.length;
+        setGiftBackground(GIFT_BACKGROUNDS[giftBgIndex]);
+      }, 3000);
+    }
+
+    function stopGiftBackgroundSlideshow() {
+      if (giftBgTimer) {
+        clearInterval(giftBgTimer);
+        giftBgTimer = null;
+      }
+    }
 
     openGiftBtn.addEventListener('click', () => {
       giftPopup.classList.add('active');
@@ -538,6 +588,9 @@
 
       // Start music only when opening the gift
       if (!playing) playMusic();
+
+      // Start background slideshow (gift text background)
+      startGiftBackgroundSlideshow();
 
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -574,6 +627,7 @@
 
     closePopup.addEventListener('click', () => {
       giftPopup.classList.remove('active');
+      stopGiftBackgroundSlideshow();
       setTimeout(() => {
         giftBox.classList.remove('opening');
         isOpened = false;
@@ -583,6 +637,7 @@
     giftPopup.addEventListener('click', (e) => {
       if (e.target === giftPopup) {
         giftPopup.classList.remove('active');
+        stopGiftBackgroundSlideshow();
         setTimeout(() => {
           giftBox.classList.remove('opening');
           isOpened = false;

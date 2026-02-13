@@ -1,0 +1,4 @@
+.venv/
+
+# Raw downloads from Google Drive (keep only browser-ready conversions)
+images/gdrive_raw/
