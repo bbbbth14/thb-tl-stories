@@ -137,6 +137,15 @@
       color: var(--text);
     }
 
+    /* Mobile overflow safety (avoid needing landscape) */
+    .valentine-content,
+    .valentine-message,
+    .valentine-content h2,
+    .valentine-content p {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
     footer {
       margin-top: 26px; color: var(--sub); font-size: 12px; text-align: center;
     }
@@ -346,6 +355,13 @@
     }
 
     @media (max-width: 520px) {
+      nav ul { flex-wrap: wrap; }
+      nav a { padding: 12px 14px; }
+
+      .wrap { padding: 16px 12px 56px; }
+      .hero { padding: 22px 16px; }
+      .valentine-content h2 { font-size: 20px; }
+      .valentine-date { font-size: 16px; }
       .gift-text { width: 100%; }
     }
   </style>
