@@ -170,6 +170,8 @@
       background: rgba(0,0,0,.6); backdrop-filter: blur(8px);
       opacity: 0; visibility: hidden;
       transition: all .3s ease;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .gift-popup.active {
       opacity: 1; visibility: visible;
@@ -177,6 +179,9 @@
     .gift-container {
       position: relative; text-align: center;
       transform: scale(0.8); transition: transform .3s ease;
+      margin: auto;
+      max-height: 100vh;
+      overflow-y: auto;
     }
     .gift-popup.active .gift-container {
       transform: scale(1);
@@ -354,6 +359,7 @@
       .gift-box { width: 160px; height: 160px; }
       .gift-box-body { height: 110px; }
       .gift-message { padding: 20px; max-width: 90%; }
+      .gift-container { padding: 20px 10px; }
     }
 
     @media (max-width: 520px) {
@@ -621,17 +627,13 @@ làm thật nhiều thứ có ý nghĩa cùng nhau(anh nghĩ ra nhiều cái l�
     openGiftBtn.addEventListener('click', () => {
       giftPopup.classList.add('active');
       isOpened = false;
+      document.body.style.overflow = 'hidden';
 
       // Start music only when opening the gift
       if (!playing) playMusic();
 
       // Start background slideshow (gift text background)
       startGiftBackgroundSlideshow();
-
-      // Auto-open the gift box so the letter is visible on mobile
-      setTimeout(() => {
-        openGiftBoxOnce();
-      }, 220);
 
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -664,6 +666,7 @@ làm thật nhiều thứ có ý nghĩa cùng nhau(anh nghĩ ra nhiều cái l�
 
     closePopup.addEventListener('click', () => {
       giftPopup.classList.remove('active');
+      document.body.style.overflow = '';
       stopGiftBackgroundSlideshow();
       setTimeout(() => {
         giftBox.classList.remove('opening');
@@ -674,6 +677,7 @@ làm thật nhiều thứ có ý nghĩa cùng nhau(anh nghĩ ra nhiều cái l�
     giftPopup.addEventListener('click', (e) => {
       if (e.target === giftPopup) {
         giftPopup.classList.remove('active');
+        document.body.style.overflow = '';
         stopGiftBackgroundSlideshow();
         setTimeout(() => {
           giftBox.classList.remove('opening');
