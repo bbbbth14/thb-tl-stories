@@ -295,6 +295,42 @@
     .dreams input:checked + label .box { background: var(--grad); border-color: transparent; color: #fff; transform: scale(1.05); }
     .dreams input:checked + label .txt { color: var(--sub); text-decoration: line-through; text-decoration-color: rgba(61, 139, 217, .7); }
     .dreams input:focus-visible + label { outline: 2px solid var(--rose); outline-offset: 2px; }
+    .dreams li { position: relative; display: flex; align-items: stretch; gap: 6px; }
+    .dreams li label { flex: 1; min-width: 0; }
+    .grip {
+      flex: none; width: 26px; display: grid; place-items: center; border-radius: 10px;
+      color: var(--muted); font-size: 15px; letter-spacing: -3px; cursor: grab; touch-action: none; user-select: none;
+      transition: color .2s, background .2s;
+    }
+    .grip:hover { color: var(--rose-2); background: var(--bg-3); }
+    .grip:active { cursor: grabbing; }
+    .dreams li.dragging { z-index: 5; }
+    .dreams li.dragging label { box-shadow: 0 14px 34px rgba(40, 90, 150, .25); background: var(--bg-2); border-color: var(--rose); }
+    .dreams li.dragging .grip { color: var(--rose-2); background: var(--bg-3); cursor: grabbing; }
+    .dream-hint { margin: -6px 0 14px; font-size: 13px; color: var(--muted); }
+    .dreams li.custom label { padding-right: 52px; }
+    .dreams .del {
+      position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
+      min-width: 32px; height: 32px; padding: 0 8px; border-radius: 999px; border: 1px solid var(--line);
+      background: var(--bg-2); color: var(--muted); font: 600 16px var(--sans); cursor: pointer; transition: all .2s;
+    }
+    .dreams .del:hover { color: var(--rose-2); border-color: var(--rose); }
+    .dreams .del.confirm { font-size: 12px; color: #fff; background: var(--rose-2); border-color: transparent; }
+    .dream-add { display: flex; gap: 10px; margin-top: 14px; }
+    .dream-add input {
+      flex: 1; min-width: 0; padding: 14px 16px; border-radius: 16px; font: 500 15px var(--sans); color: var(--text);
+      background: var(--bg-2); border: 1.5px dashed rgba(42, 109, 179, .35); outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .dream-add input::placeholder { color: var(--muted); }
+    .dream-add input:focus { border-style: solid; border-color: var(--rose); box-shadow: 0 0 0 4px rgba(61, 139, 217, .12); }
+    .dream-add button {
+      flex: none; width: 50px; height: 50px; border-radius: 50%; border: 0; cursor: pointer;
+      background: var(--grad); color: #fff; font: 400 28px/1 var(--sans);
+      box-shadow: 0 8px 20px rgba(61, 139, 217, .3); transition: transform .2s;
+    }
+    .dream-add button:hover { transform: rotate(90deg) scale(1.05); }
+    .dream-add button:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
     footer { position: relative; z-index: 1; text-align: center; padding: 10px 16px 120px; color: var(--muted); }
     footer .script { font-family: var(--script); font-size: 26px; color: var(--rose-2); }
@@ -443,7 +479,13 @@
           <div class="bar"><span id="dreamBar"></span></div>
           <b id="dreamCount">0/0</b>
         </div>
+        <p class="dream-hint">Giữ và kéo ⋮⋮ để sắp xếp thứ tự.</p>
         <ul class="dreams" id="dreams"></ul>
+        <form class="dream-add" id="dreamForm" autocomplete="off">
+          <label class="sr-only" for="dreamInput">Thêm điều muốn làm cùng nhau</label>
+          <input id="dreamInput" type="text" maxlength="120" placeholder="Thêm điều mình muốn làm cùng nhau…">
+          <button type="submit" aria-label="Thêm">+</button>
+        </form>
       </div>
     </section>
   </main>
@@ -584,22 +626,123 @@ Thật may mắn vì em đã có anh bên cạnh, em biết ơn vì sự tồn t
 
     // Dream list (same storage key as before, so saved ticks are kept)
     const DREAM_KEY = 'thb_tl_dreamlist_v1';
+    const CUSTOM_KEY = 'thb_tl_dreamlist_custom_v1';
     const dreamState = store.get(DREAM_KEY, {});
-    $('dreams').innerHTML = DREAMS.map((t, i) => `<li>
-      <input type="checkbox" id="dream${i}" ${dreamState['dream' + i] ? 'checked' : ''}>
-      <label for="dream${i}"><span class="box">✓</span><span class="txt">${t}</span></label>
-    </li>`).join('');
+    let customDreams = store.get(CUSTOM_KEY, []);
+    if (!Array.isArray(customDreams)) customDreams = [];
+    const esc = t => t.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    function dreamItem(id, text, custom) {
+      return `<li${custom ? ' class="custom"' : ''}>
+        <span class="grip" aria-hidden="true" title="Kéo để sắp xếp">⋮⋮</span>
+        <input type="checkbox" id="${id}" ${dreamState[id] ? 'checked' : ''}>
+        <label for="${id}"><span class="box">✓</span><span class="txt">${esc(text)}</span></label>
+        ${custom ? `<button class="del" data-id="${id}" aria-label="Xoá: ${esc(text)}">×</button>` : ''}
+      </li>`;
+    }
+    const ORDER_KEY = 'thb_tl_dreamlist_order_v1';
+    let dreamOrder = store.get(ORDER_KEY, []);
+    if (!Array.isArray(dreamOrder)) dreamOrder = [];
+    function renderDreams() {
+      const items = [
+        ...DREAMS.map((t, i) => ({ id: 'dream' + i, text: t, custom: false })),
+        ...customDreams.map(d => ({ ...d, custom: true }))
+      ];
+      const rank = id => { const i = dreamOrder.indexOf(id); return i < 0 ? Infinity : i; };
+      items.sort((a, b) => rank(a.id) - rank(b.id));
+      $('dreams').innerHTML = items.map(d => dreamItem(d.id, d.text, d.custom)).join('');
+      updateDreams();
+    }
+    function saveOrder() {
+      dreamOrder = [...document.querySelectorAll('#dreams input')].map(b => b.id);
+      store.set(ORDER_KEY, dreamOrder);
+    }
+    // Drag to reorder (pointer events: mouse + touch), dragged by the ⋮⋮ handle
+    (function dragSort(list) {
+      let item = null, px = 0, py = 0;
+      const flip = fn => {
+        const before = new Map([...list.children].map(el => [el, el.getBoundingClientRect()]));
+        fn();
+        for (const [el, r] of before) {
+          if (el === item) continue;
+          const n = el.getBoundingClientRect(), dx = r.left - n.left, dy = r.top - n.top;
+          if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 160, easing: 'ease-out' });
+        }
+      };
+      list.addEventListener('pointerdown', e => {
+        const grip = e.target.closest('.grip');
+        if (!grip) return;
+        e.preventDefault();
+        item = grip.closest('li');
+        item.classList.add('dragging');
+        grip.setPointerCapture(e.pointerId);
+        px = e.clientX; py = e.clientY;
+      });
+      list.addEventListener('pointermove', e => {
+        if (!item) return;
+        item.style.transform = `translate(${e.clientX - px}px, ${e.clientY - py}px)`;
+        const others = [...list.children].filter(el => el !== item);
+        const over = others.find(el => { const r = el.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; });
+        if (!over) return;
+        const o = over.getBoundingClientRect();
+        const twoCols = getComputedStyle(list).gridTemplateColumns.split(' ').length > 1;
+        const items = [...list.children];
+        const after = items.indexOf(over) > items.indexOf(item);
+        const pastMid = twoCols && Math.abs(over.offsetTop - item.offsetTop) < 4
+          ? (after ? e.clientX > o.left + o.width / 2 : e.clientX < o.left + o.width / 2)
+          : (after ? e.clientY > o.top + o.height / 2 : e.clientY < o.top + o.height / 2);
+        if (!pastMid && !twoCols) return;
+        const old = item.getBoundingClientRect();
+        flip(() => list.insertBefore(item, after ? over.nextSibling : over));
+        const nw = item.getBoundingClientRect();
+        px += nw.left - old.left; py += nw.top - old.top;
+        item.style.transform = `translate(${e.clientX - px}px, ${e.clientY - py}px)`;
+      });
+      const end = () => {
+        if (!item) return;
+        const el = item; item = null;
+        el.animate([{ transform: el.style.transform }, { transform: 'none' }], { duration: 160, easing: 'ease-out' });
+        el.style.transform = '';
+        el.classList.remove('dragging');
+        saveOrder();
+      };
+      list.addEventListener('pointerup', end);
+      list.addEventListener('pointercancel', end);
+    })($('dreams'));
     function updateDreams() {
       const boxes = [...document.querySelectorAll('#dreams input')];
       const done = boxes.filter(b => b.checked).length;
-      $('dreamBar').style.width = (done / boxes.length * 100) + '%';
+      $('dreamBar').style.width = (boxes.length ? done / boxes.length * 100 : 0) + '%';
       $('dreamCount').textContent = `${done}/${boxes.length}`;
-      const state = {};
-      boxes.forEach(b => state[b.id] = b.checked);
-      store.set(DREAM_KEY, state);
+      boxes.forEach(b => dreamState[b.id] = b.checked);
+      store.set(DREAM_KEY, dreamState);
     }
     $('dreams').addEventListener('change', updateDreams);
-    updateDreams();
+    $('dreams').addEventListener('click', e => {
+      const btn = e.target.closest('.del');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.confirm !== '1') {
+        btn.dataset.confirm = '1'; btn.textContent = 'Xoá?'; btn.classList.add('confirm');
+        setTimeout(() => { if (btn.isConnected) { btn.dataset.confirm = ''; btn.textContent = '×'; btn.classList.remove('confirm'); } }, 2500);
+        return;
+      }
+      customDreams = customDreams.filter(d => d.id !== id);
+      delete dreamState[id];
+      dreamOrder = dreamOrder.filter(x => x !== id); store.set(ORDER_KEY, dreamOrder);
+      store.set(CUSTOM_KEY, customDreams);
+      renderDreams();
+    });
+    $('dreamForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const text = $('dreamInput').value.trim();
+      if (!text) { $('dreamInput').focus(); return; }
+      customDreams.push({ id: 'custom' + Date.now(), text });
+      store.set(CUSTOM_KEY, customDreams);
+      $('dreamInput').value = '';
+      renderDreams();
+      $('dreams').lastElementChild.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 350 });
+    });
+    renderDreams();
 
     // Letter
     $('letterContent').textContent = LETTER;
