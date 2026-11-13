@@ -194,8 +194,12 @@
     .polaroid .photo {
       width: 100%; height: 100%; border-radius: 2px; overflow: hidden; background: #2a2236; position: relative;
     }
+    .polaroid .photo::before {
+      content: ""; position: absolute; inset: -20px; background: var(--photo) center / cover;
+      filter: blur(18px) brightness(.85); transition: background-image .35s;
+    }
     .polaroid img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
+      position: relative; width: 100%; height: 100%; object-fit: contain; display: block;
       filter: saturate(1.08) contrast(1.03); transition: opacity .35s;
     }
     .polaroid img.loading { opacity: 0; }
@@ -407,7 +411,7 @@
             <div class="ghost g2"></div>
             <span class="tap-hint" id="tapHint">Chạm để xem tiếp 👆</span>
             <figure class="polaroid" id="polaroid" role="button" tabindex="0" aria-label="Ảnh tiếp theo">
-              <div class="photo">
+              <div class="photo" style="--photo: url('images/IMG_0360.jpg')">
                 <img id="galleryImage" alt="THB và TL" src="images/IMG_0360.jpg" decoding="async">
               </div>
               <figcaption id="galleryCaption">Click for more ^^</figcaption>
@@ -508,7 +512,17 @@ Thật may mắn vì em đã có anh bên cạnh, em biết ơn vì sự tồn t
       { src: "images/IMG_6686.jpg", alt: "THB và TL đi water bus", caption: "THB và TL đi water bus" },
       { src: "images/IMG_6981.jpg", alt: "THB và TL đi xem phim", caption: "THB và TL đi xem phim" },
       { src: "images/Day1.jpg", alt: "no cap", caption: "THB và TL" },
-      { src: "images/IMG_8155.jpg", alt: "THB và TL ở sinh nhật anh", caption: "THB và TL ở sinh nhật anh" }
+      { src: "images/IMG_8155.jpg", alt: "THB và TL ở sinh nhật anh", caption: "THB và TL ở sinh nhật anh" },
+      { src: "images/us/img-5021.jpg", alt: "Kỷ niệm 1 năm của THB và TL", caption: "Happy Anniversary - 1 năm của mình 💖" },
+      { src: "images/us/img-1802.jpg", alt: "THB ôm TL", caption: "Ôm em thật chặt 🤗" },
+      { src: "images/us/d110cece.jpg", alt: "THB và TL đội mũ vịt đi mưa", caption: "Hai chú vịt đi mưa 🦆" },
+      { src: "images/us/film-bien.jpg", alt: "THB và TL nắm tay ở biển", caption: "Nắm tay nhau giữa biển xanh 🌊" },
+      { src: "images/us/img-0703.jpg", alt: "THB và TL ở biển", caption: "Biển, nắng và em ☀️" },
+      { src: "images/us/img-3816.jpg", alt: "THB và TL đi hẹn hò buổi tối", caption: "Hẹn hò buổi tối ✨" },
+      { src: "images/us/img-6450.jpg", alt: "THB và TL selfie", caption: "Selfie cùng em 📸" },
+      { src: "images/us/img-8601.jpg", alt: "THB và TL bên hoa vàng", caption: "Bên hiên nhà hoa vàng 🌼" },
+      { src: "images/us/img-6937.jpg", alt: "TL bá cổ THB", caption: "Em bá cổ anh 😆" },
+      { src: "images/us/img-2034.jpg", alt: "THB và TL đi dạo", caption: "Đi dạo cùng nhau 🌿" }
     ];
     const MILESTONES = [
       { date: "2025-07-31", icon: "💕", text: "Ngày chúng ta bắt đầu hành trình yêu thương nhau." },
@@ -667,6 +681,7 @@ Thật may mắn vì em đã có anh bên cạnh, em biết ơn vì sự tồn t
         img.classList.add('loading');
         img.onload = img.onerror = () => img.classList.remove('loading');
         img.src = src; img.alt = alt; cap.textContent = caption;
+        img.parentElement.style.setProperty('--photo', `url("${src}")`);
         $('imgIndex').textContent = `${idx + 1} / ${IMAGES.length}`;
         pol.classList.remove('flip', 'flip-back');
         preload(idx + dir);
