@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#16121c">
+  <meta name="theme-color" content="#fdf7f4">
   <title>THB and TL 😘</title>
   <meta name="description" content="Một góc nhỏ dành riêng cho em.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,21 +11,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-1: #16121c;
-      --bg-2: #1d1724;
-      --bg-3: #121016;
-      --rose: #ff8fb1;
-      --rose-2: #ffc4d6;
-      --peach: #ffd6a5;
-      --lilac: #c9b6ff;
+      --bg-1: #fdf7f4;
+      --bg-2: #ffffff;
+      --bg-3: #fbeef0;
+      --rose: #e0607e;
+      --rose-2: #c44a6a;
+      --peach: #f08a6c;
+      --lilac: #a77bd6;
       --sky: #8fd3ff;
-      --text: #fff7fb;
-      --sub: #d9cde6;
-      --muted: #a89bbd;
-      --line: rgba(255, 255, 255, .12);
-      --glass: rgba(255, 255, 255, .06);
-      --glass-2: rgba(255, 255, 255, .1);
-      --shadow: 0 20px 50px rgba(5, 0, 20, .45);
+      --text: #3d2a35;
+      --sub: #6e5662;
+      --muted: #9a8590;
+      --line: rgba(196, 74, 106, .14);
+      --glass: rgba(255, 255, 255, .7);
+      --glass-2: #ffffff;
+      --shadow: 0 14px 40px rgba(150, 70, 95, .12);
       --radius: 24px;
       --grad: linear-gradient(135deg, var(--rose) 0%, var(--peach) 50%, var(--lilac) 100%);
       --serif: "Playfair Display", Georgia, serif;
@@ -40,14 +40,14 @@
       font-family: var(--sans);
       color: var(--text);
       background:
-        radial-gradient(700px 420px at 50% -8%, rgba(255, 170, 190, .10), transparent 70%),
+        radial-gradient(700px 420px at 50% -8%, rgba(255, 190, 205, .45), transparent 70%),
         linear-gradient(180deg, var(--bg-1), var(--bg-3));
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
     body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: inherit; }
     html { background: var(--bg-1); overflow-x: hidden; }
-    ::selection { background: var(--rose); color: #1a1030; }
+    ::selection { background: var(--rose); color: #fff; }
 
     /* ---------- Nav ---------- */
     nav {
@@ -57,9 +57,9 @@
     nav ul {
       max-width: 520px; margin: 0 auto; padding: 6px; list-style: none;
       display: flex; gap: 6px;
-      background: rgba(22, 18, 28, .55); border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .75); border: 1px solid var(--line);
       border-radius: 999px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+      box-shadow: 0 8px 24px rgba(150, 70, 95, .1);
     }
     nav li { flex: 1; }
     nav a {
@@ -68,13 +68,13 @@
       transition: background .25s, color .25s; white-space: nowrap;
     }
     nav a:hover { color: var(--text); background: var(--glass-2); }
-    nav a.active { background: var(--grad); color: #2a1340; }
+    nav a.active { background: var(--grad); color: #fff; }
 
     /* ---------- Layout ---------- */
     main { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 8px 16px 120px; }
     section { margin-top: 28px; }
     .card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .03));
+      background: rgba(255, 255, 255, .8);
       border: 1px solid var(--line); border-radius: var(--radius);
       box-shadow: var(--shadow); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     }
@@ -129,7 +129,7 @@
     .clock { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
     .clock .unit {
       min-width: 76px; padding: 12px 8px 10px; border-radius: 16px;
-      background: rgba(255, 255, 255, .06); border: 1px solid var(--line);
+      background: var(--bg-3); border: 1px solid var(--line);
     }
     .clock .num { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
     .clock .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .14em; margin-top: 2px; }
@@ -149,7 +149,7 @@
       transition: transform .2s, background .2s, border-color .2s;
     }
     .chip:hover { transform: translateY(-2px); background: var(--glass-2); border-color: rgba(255, 143, 177, .5); }
-    .chip.primary { background: var(--grad); color: #2a1340; border-color: transparent; box-shadow: 0 10px 24px rgba(255, 143, 177, .3); }
+    .chip.primary { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 10px 24px rgba(224, 96, 126, .3); }
 
     /* ---------- Gallery ---------- */
     .gallery-wrap { display: grid; gap: 22px; align-items: center; }
@@ -158,14 +158,14 @@
     .stage { position: relative; max-width: 380px; width: 100%; margin: 0 auto; aspect-ratio: 4 / 5; }
     .stage .ghost {
       position: absolute; inset: 0; border-radius: 6px; background: #f8f1e9;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, .35);
+      box-shadow: 0 12px 30px rgba(150, 70, 95, .15);
     }
     .stage .ghost.g1 { transform: rotate(-6deg) translate(-10px, 6px); opacity: .55; }
     .stage .ghost.g2 { transform: rotate(4deg) translate(10px, 4px); opacity: .75; }
     .polaroid {
       position: absolute; inset: 0; margin: 0;
       background: #fffaf3; border-radius: 6px; padding: 14px 14px 64px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+      box-shadow: 0 20px 50px rgba(150, 70, 95, .22);
       transform: rotate(-1.5deg); transition: transform .45s cubic-bezier(.2, .8, .2, 1), opacity .3s;
       cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
     }
@@ -173,7 +173,7 @@
     .polaroid.flip { transform: rotate(6deg) translateX(40px) scale(.96); opacity: 0; }
     .polaroid.flip-back { transform: rotate(-8deg) translateX(-40px) scale(.96); opacity: 0; }
     .polaroid .photo {
-      width: 100%; height: 100%; border-radius: 2px; overflow: hidden; background: #2a2236; position: relative;
+      width: 100%; height: 100%; border-radius: 2px; overflow: hidden; background: #f3e6ea; position: relative;
     }
     .polaroid .photo::before {
       content: ""; position: absolute; inset: -20px; background: var(--photo) center / cover;
@@ -215,7 +215,7 @@
     .env-body {
       position: relative; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden;
       background: linear-gradient(160deg, #ffd9e5, #f5b8cc);
-      box-shadow: 0 24px 50px rgba(0, 0, 0, .4);
+      box-shadow: 0 20px 44px rgba(150, 70, 95, .2);
     }
     .env-body::before, .env-body::after { content: ""; position: absolute; inset: 0; }
     .env-body::before { background: #f7c3d4; clip-path: polygon(0 0, 52% 58%, 0 100%); }
@@ -245,7 +245,7 @@
     .paper.show { max-height: 1200px; opacity: 1; transform: none; margin-top: -40px; }
     .paper-inner {
       position: relative; z-index: 4; padding: 30px 26px 34px; border-radius: 10px;
-      color: #3a2a4a; box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+      color: #3a2a4a; box-shadow: 0 20px 50px rgba(150, 70, 95, .18);
       background:
         repeating-linear-gradient(180deg, transparent 0 33px, rgba(194, 24, 91, .12) 33px 34px),
         linear-gradient(180deg, #fffaf3, #fff3ea);
@@ -257,13 +257,13 @@
     .timeline { position: relative; padding: 8px 0 8px 6px; list-style: none; margin: 0; }
     .timeline::before {
       content: ""; position: absolute; left: 21px; top: 10px; bottom: 10px; width: 2px;
-      background: linear-gradient(180deg, var(--rose), var(--lilac) 60%, rgba(255, 255, 255, .12));
+      background: linear-gradient(180deg, var(--rose), var(--lilac) 60%, rgba(167, 123, 214, .15));
     }
     .tl-item { position: relative; padding: 0 0 18px 50px; }
     .tl-dot {
       position: absolute; left: 0; top: 4px; width: 32px; height: 32px; border-radius: 50%;
       display: grid; place-items: center; font-size: 15px;
-      background: var(--bg-2); border: 2px solid var(--rose); box-shadow: 0 0 0 5px rgba(255, 143, 177, .12);
+      background: var(--bg-2); border: 2px solid var(--rose); box-shadow: 0 0 0 5px rgba(224, 96, 126, .12);
     }
     .tl-item.future .tl-dot { border-style: dashed; border-color: var(--muted); box-shadow: none; }
     .tl-card { padding: 14px 16px; border-radius: 16px; background: var(--glass); border: 1px solid var(--line); }
@@ -275,7 +275,7 @@
     /* ---------- Dream list ---------- */
     .dream-card { padding: 22px 18px; }
     .progress { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-    .bar { flex: 1; height: 10px; border-radius: 999px; background: rgba(255, 255, 255, .08); overflow: hidden; }
+    .bar { flex: 1; height: 10px; border-radius: 999px; background: rgba(196, 74, 106, .1); overflow: hidden; }
     .bar span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--grad); transition: width .6s cubic-bezier(.2, .8, .2, 1); }
     .progress b { font-variant-numeric: tabular-nums; font-size: 14px; color: var(--rose-2); min-width: 44px; text-align: right; }
     .dreams { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
@@ -289,10 +289,10 @@
     .dreams input { position: absolute; opacity: 0; pointer-events: none; }
     .dreams .box {
       flex: none; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
-      border: 2px solid rgba(255, 255, 255, .3); font-size: 14px; color: transparent; transition: all .25s;
+      border: 2px solid rgba(196, 74, 106, .35); font-size: 14px; color: transparent; transition: all .25s;
     }
     .dreams input:checked + label { background: rgba(255, 143, 177, .12); border-color: rgba(255, 143, 177, .45); }
-    .dreams input:checked + label .box { background: var(--grad); border-color: transparent; color: #2a1340; transform: scale(1.05); }
+    .dreams input:checked + label .box { background: var(--grad); border-color: transparent; color: #fff; transform: scale(1.05); }
     .dreams input:checked + label .txt { color: var(--sub); text-decoration: line-through; text-decoration-color: rgba(255, 143, 177, .7); }
     .dreams input:focus-visible + label { outline: 2px solid var(--rose); outline-offset: 2px; }
 
@@ -303,8 +303,8 @@
     .music {
       position: fixed; z-index: 60; right: 16px; bottom: max(16px, env(safe-area-inset-bottom));
       display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 999px;
-      background: rgba(22, 18, 28, .7); border: 1px solid var(--line);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+      background: rgba(255, 255, 255, .85); border: 1px solid var(--line);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 30px rgba(150, 70, 95, .18);
     }
     .vinyl {
       position: relative; width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer; padding: 0;
@@ -314,7 +314,7 @@
     .vinyl::after {
       content: ""; position: absolute; inset: 14px; border-radius: 50%; background: var(--grad);
     }
-    .vinyl .icon { position: absolute; inset: 0; display: grid; place-items: center; z-index: 1; font-size: 12px; color: #2a1340; }
+    .vinyl .icon { position: absolute; inset: 0; display: grid; place-items: center; z-index: 1; font-size: 12px; color: #fff; }
     .music.playing .vinyl { animation: spin 4s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .music .meta { display: flex; flex-direction: column; line-height: 1.2; }
