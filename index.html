@@ -295,7 +295,19 @@
     .dreams input:checked + label .box { background: var(--grad); border-color: transparent; color: #fff; transform: scale(1.05); }
     .dreams input:checked + label .txt { color: var(--sub); text-decoration: line-through; text-decoration-color: rgba(61, 139, 217, .7); }
     .dreams input:focus-visible + label { outline: 2px solid var(--rose); outline-offset: 2px; }
-    .dreams li { position: relative; }
+    .dreams li { position: relative; display: flex; align-items: stretch; gap: 6px; }
+    .dreams li label { flex: 1; min-width: 0; }
+    .grip {
+      flex: none; width: 26px; display: grid; place-items: center; border-radius: 10px;
+      color: var(--muted); font-size: 15px; letter-spacing: -3px; cursor: grab; touch-action: none; user-select: none;
+      transition: color .2s, background .2s;
+    }
+    .grip:hover { color: var(--rose-2); background: var(--bg-3); }
+    .grip:active { cursor: grabbing; }
+    .dreams li.dragging { z-index: 5; }
+    .dreams li.dragging label { box-shadow: 0 14px 34px rgba(40, 90, 150, .25); background: var(--bg-2); border-color: var(--rose); }
+    .dreams li.dragging .grip { color: var(--rose-2); background: var(--bg-3); cursor: grabbing; }
+    .dream-hint { margin: -6px 0 14px; font-size: 13px; color: var(--muted); }
     .dreams li.custom label { padding-right: 52px; }
     .dreams .del {
       position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
@@ -467,6 +479,7 @@
           <div class="bar"><span id="dreamBar"></span></div>
           <b id="dreamCount">0/0</b>
         </div>
+        <p class="dream-hint">Giữ và kéo ⋮⋮ để sắp xếp thứ tự.</p>
         <ul class="dreams" id="dreams"></ul>
         <form class="dream-add" id="dreamForm" autocomplete="off">
           <label class="sr-only" for="dreamInput">Thêm điều muốn làm cùng nhau</label>
@@ -620,17 +633,81 @@ Thật may mắn vì em đã có anh bên cạnh, em biết ơn vì sự tồn t
     const esc = t => t.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     function dreamItem(id, text, custom) {
       return `<li${custom ? ' class="custom"' : ''}>
+        <span class="grip" aria-hidden="true" title="Kéo để sắp xếp">⋮⋮</span>
         <input type="checkbox" id="${id}" ${dreamState[id] ? 'checked' : ''}>
         <label for="${id}"><span class="box">✓</span><span class="txt">${esc(text)}</span></label>
         ${custom ? `<button class="del" data-id="${id}" aria-label="Xoá: ${esc(text)}">×</button>` : ''}
       </li>`;
     }
+    const ORDER_KEY = 'thb_tl_dreamlist_order_v1';
+    let dreamOrder = store.get(ORDER_KEY, []);
+    if (!Array.isArray(dreamOrder)) dreamOrder = [];
     function renderDreams() {
-      $('dreams').innerHTML =
-        DREAMS.map((t, i) => dreamItem('dream' + i, t, false)).join('') +
-        customDreams.map(d => dreamItem(d.id, d.text, true)).join('');
+      const items = [
+        ...DREAMS.map((t, i) => ({ id: 'dream' + i, text: t, custom: false })),
+        ...customDreams.map(d => ({ ...d, custom: true }))
+      ];
+      const rank = id => { const i = dreamOrder.indexOf(id); return i < 0 ? Infinity : i; };
+      items.sort((a, b) => rank(a.id) - rank(b.id));
+      $('dreams').innerHTML = items.map(d => dreamItem(d.id, d.text, d.custom)).join('');
       updateDreams();
     }
+    function saveOrder() {
+      dreamOrder = [...document.querySelectorAll('#dreams input')].map(b => b.id);
+      store.set(ORDER_KEY, dreamOrder);
+    }
+    // Drag to reorder (pointer events: mouse + touch), dragged by the ⋮⋮ handle
+    (function dragSort(list) {
+      let item = null, px = 0, py = 0;
+      const flip = fn => {
+        const before = new Map([...list.children].map(el => [el, el.getBoundingClientRect()]));
+        fn();
+        for (const [el, r] of before) {
+          if (el === item) continue;
+          const n = el.getBoundingClientRect(), dx = r.left - n.left, dy = r.top - n.top;
+          if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 160, easing: 'ease-out' });
+        }
+      };
+      list.addEventListener('pointerdown', e => {
+        const grip = e.target.closest('.grip');
+        if (!grip) return;
+        e.preventDefault();
+        item = grip.closest('li');
+        item.classList.add('dragging');
+        grip.setPointerCapture(e.pointerId);
+        px = e.clientX; py = e.clientY;
+      });
+      list.addEventListener('pointermove', e => {
+        if (!item) return;
+        item.style.transform = `translate(${e.clientX - px}px, ${e.clientY - py}px)`;
+        const others = [...list.children].filter(el => el !== item);
+        const over = others.find(el => { const r = el.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; });
+        if (!over) return;
+        const o = over.getBoundingClientRect();
+        const twoCols = getComputedStyle(list).gridTemplateColumns.split(' ').length > 1;
+        const items = [...list.children];
+        const after = items.indexOf(over) > items.indexOf(item);
+        const pastMid = twoCols && Math.abs(over.offsetTop - item.offsetTop) < 4
+          ? (after ? e.clientX > o.left + o.width / 2 : e.clientX < o.left + o.width / 2)
+          : (after ? e.clientY > o.top + o.height / 2 : e.clientY < o.top + o.height / 2);
+        if (!pastMid && !twoCols) return;
+        const old = item.getBoundingClientRect();
+        flip(() => list.insertBefore(item, after ? over.nextSibling : over));
+        const nw = item.getBoundingClientRect();
+        px += nw.left - old.left; py += nw.top - old.top;
+        item.style.transform = `translate(${e.clientX - px}px, ${e.clientY - py}px)`;
+      });
+      const end = () => {
+        if (!item) return;
+        const el = item; item = null;
+        el.animate([{ transform: el.style.transform }, { transform: 'none' }], { duration: 160, easing: 'ease-out' });
+        el.style.transform = '';
+        el.classList.remove('dragging');
+        saveOrder();
+      };
+      list.addEventListener('pointerup', end);
+      list.addEventListener('pointercancel', end);
+    })($('dreams'));
     function updateDreams() {
       const boxes = [...document.querySelectorAll('#dreams input')];
       const done = boxes.filter(b => b.checked).length;
@@ -651,6 +728,7 @@ Thật may mắn vì em đã có anh bên cạnh, em biết ơn vì sự tồn t
       }
       customDreams = customDreams.filter(d => d.id !== id);
       delete dreamState[id];
+      dreamOrder = dreamOrder.filter(x => x !== id); store.set(ORDER_KEY, dreamOrder);
       store.set(CUSTOM_KEY, customDreams);
       renderDreams();
     });
