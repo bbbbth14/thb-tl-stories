@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1a1030">
+  <meta name="theme-color" content="#16121c">
   <title>THB and TL 😘</title>
   <meta name="description" content="Một góc nhỏ dành riêng cho em.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,9 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-1: #1a1030;
-      --bg-2: #2a1340;
-      --bg-3: #0f1a33;
+      --bg-1: #16121c;
+      --bg-2: #1d1724;
+      --bg-3: #121016;
       --rose: #ff8fb1;
       --rose-2: #ffc4d6;
       --peach: #ffd6a5;
@@ -40,33 +40,14 @@
       font-family: var(--sans);
       color: var(--text);
       background:
-        radial-gradient(900px 600px at 0% 0%, rgba(255, 143, 177, .22), transparent 60%),
-        radial-gradient(800px 600px at 100% 30%, rgba(201, 182, 255, .18), transparent 60%),
-        radial-gradient(900px 700px at 50% 110%, rgba(143, 211, 255, .14), transparent 60%),
-        linear-gradient(180deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+        radial-gradient(700px 420px at 50% -8%, rgba(255, 170, 190, .10), transparent 70%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-3));
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
     body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: inherit; }
     html { background: var(--bg-1); overflow-x: hidden; }
     ::selection { background: var(--rose); color: #1a1030; }
-
-    /* ---------- Ambient layer ---------- */
-    .sky { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .sky .star {
-      position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff;
-      animation: twinkle 4s ease-in-out infinite;
-    }
-    .sky .heart {
-      position: absolute; bottom: -40px; color: var(--rose); opacity: .5;
-      animation: rise linear infinite; filter: drop-shadow(0 0 8px rgba(255, 143, 177, .6));
-    }
-    @keyframes twinkle { 0%, 100% { opacity: .15; } 50% { opacity: .9; } }
-    @keyframes rise {
-      0% { transform: translateY(0) translateX(0) rotate(0); opacity: 0; }
-      10% { opacity: .55; }
-      100% { transform: translateY(-115vh) translateX(40px) rotate(25deg); opacity: 0; }
-    }
 
     /* ---------- Nav ---------- */
     nav {
@@ -76,7 +57,7 @@
     nav ul {
       max-width: 520px; margin: 0 auto; padding: 6px; list-style: none;
       display: flex; gap: 6px;
-      background: rgba(26, 16, 48, .55); border: 1px solid var(--line);
+      background: rgba(22, 18, 28, .55); border: 1px solid var(--line);
       border-radius: 999px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
     }
@@ -322,7 +303,7 @@
     .music {
       position: fixed; z-index: 60; right: 16px; bottom: max(16px, env(safe-area-inset-bottom));
       display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 999px;
-      background: rgba(26, 16, 48, .7); border: 1px solid var(--line);
+      background: rgba(22, 18, 28, .7); border: 1px solid var(--line);
       backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
     }
     .vinyl {
@@ -358,7 +339,6 @@
   </style>
 </head>
 <body>
-  <div class="sky" aria-hidden="true"></div>
 
   <nav>
     <ul>
@@ -558,31 +538,6 @@ Thật may mắn vì em đã có anh bên cạnh, em biết ơn vì sự tồn t
     $('nameYou').textContent = NAMES.you;
     $('nameHer').textContent = NAMES.her;
     $('footerText').textContent = `From bottom of ${NAMES.you}'s heart ❤️`;
-
-    // Ambient sky: stars + hearts
-    (function sky() {
-      const sky = document.querySelector('.sky');
-      for (let i = 0; i < 60; i++) {
-        const s = document.createElement('i');
-        s.className = 'star';
-        Object.assign(s.style, { left: Math.random() * 100 + '%', top: Math.random() * 100 + '%', animationDelay: -Math.random() * 4 + 's', opacity: Math.random() });
-        sky.appendChild(s);
-      }
-      if (reduceMotion) return;
-      const glyphs = ['❤', '♥', '❥', '♡'];
-      for (let i = 0; i < 16; i++) {
-        const h = document.createElement('span');
-        h.className = 'heart';
-        h.textContent = glyphs[i % glyphs.length];
-        Object.assign(h.style, {
-          left: Math.random() * 100 + '%',
-          fontSize: 10 + Math.random() * 18 + 'px',
-          animationDuration: 12 + Math.random() * 14 + 's',
-          animationDelay: -Math.random() * 20 + 's'
-        });
-        sky.appendChild(h);
-      }
-    })();
 
     // Counter
     const start = new Date(START_DATE);
